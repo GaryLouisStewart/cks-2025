@@ -1,0 +1,30 @@
+- name: Provision Kubernetes Master
+  hosts: master
+  become: true
+  roles:
+    - kube-master
+
+- name: Fetch join command from master
+  hosts: master
+  become: true
+  tasks:
+    - name: Get join command
+      shell: kubeadm token create --print-join-command
+      register: join_out
+
+    - name: Set join command globally
+      set_fact:
+        join_command: "{{ join_out.stdout }}"
+      delegate_to: localhost
+
+- name: Join worker nodes to the cluster
+  hosts: workers
+  become: true
+  roles:
+    - kube-nodes
+
+- name: Install Cilium on Master
+  hosts: master
+  become: true
+  roles:
+    - cilium-install

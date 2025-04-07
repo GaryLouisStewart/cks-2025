@@ -1,0 +1,10 @@
+- name: Initialize Kubernetes control plane
+  command: kubeadm init --apiserver-advertise-address=192.168.56.10 --pod-network-cidr={{ pod_network_cidr }}
+  args:
+    creates: /etc/kubernetes/admin.conf
+
+- name: Configure kubectl for vagrant user
+  shell: |
+    mkdir -p ~vagrant/.kube
+    cp -i /etc/kubernetes/admin.conf ~vagrant/.kube/config
+    chown vagrant:vagrant ~vagrant/.kube/config

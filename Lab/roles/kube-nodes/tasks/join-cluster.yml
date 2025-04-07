@@ -1,0 +1,3 @@
+- name: Join the cluster
+  shell: "{{ hostvars['k8s-master']['join_command'] }}"
+  when: hostvars['k8s-master']['join_command'] is defined
